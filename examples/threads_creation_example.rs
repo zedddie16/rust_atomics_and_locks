@@ -7,6 +7,15 @@ fn main() {
 
     t1.join().unwrap();
     t2.join().unwrap();
+
+    let numbers = vec![1, 2, 3];
+    thread::spawn(move || {
+        for n in &numbers {
+            println!("{n}");
+        }
+    })
+    .join()
+    .unwrap();
 }
 
 fn f() {
