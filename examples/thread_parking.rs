@@ -62,6 +62,11 @@ fn main() {
         for i in 0.. {
             queue.lock().unwrap().push_back(i);
             t.thread().unpark(); // thread is not sleeping only when it has what it need
+            // Important detail to know:
+            // park() does not guarantee that it will only return because of a matching
+            // unpark(). While somewhat rare, it might have spurious wake-ups. Our example
+            // deals with that just fine, because the consuming thread will lock the queue,
+            // see that it is empty, and directly unlock it and park itself again.
             thread::sleep(Duration::from_secs(1));
         }
     });
