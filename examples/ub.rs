@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 fn f(a: &i32, b: &mut i32) {
     let before = *a;
     *b += 1;
@@ -8,6 +9,7 @@ fn f(a: &i32, b: &mut i32) {
 } // &mut - exlusive borrowing
 use std::cell::Cell;
 
+#[allow(dead_code)]
 fn f1(a: &Cell<i32>, b: &Cell<i32>) {
     let before = a.get();
     b.set(b.get() + 1);
