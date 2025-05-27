@@ -35,8 +35,8 @@ fn main() {
     //
     // and when next push will overlap on existing item whole VecDeque
     // will be reallocated into bigger size memory chunk
-    // (not the d as it have static capacity but the VecDeque
-    // which size isn't known on compile time)
+    // (even in q which is "statically sized" it will grow iternal buffer by reallocating
+    // if it exceed pre-set capacity)
     //
     //
 
@@ -44,6 +44,14 @@ fn main() {
         let t = s.spawn(|| {
             loop {
                 let item = queue.lock().unwrap().pop_front();
+                // as I see it better to allocate item as a holder for "popped" value
+                // as consumer will be unparked only when there is a value to consume,
+                // so:
+                // let item = {
+                // let q = queue.lock().unwrap();
+                // q.pop_front() // q is dropped after this and dbg! doesnt hold a guard
+                // for unnesesearly time
+                // }
                 if let Some(item) = item {
                     dbg!(item);
                 } else {
