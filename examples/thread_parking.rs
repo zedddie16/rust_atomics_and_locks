@@ -44,14 +44,14 @@ fn main() {
         let t = s.spawn(|| {
             loop {
                 let item = queue.lock().unwrap().pop_front();
-                // as I see it better to allocate item as a holder for "popped" value
-                // as consumer will be unparked only when there is a value to consume,
+                // as I see it is better to allocate item as a holder for "popped" value
+                // as it will mitigate other threads wait time for lock
                 // so:
                 // let item = {
-                // let q = queue.lock().unwrap();
-                // q.pop_front() // q is dropped after this and dbg! doesnt hold a guard
-                // for unnesesearly time
-                // }
+                // let q = queue.lock().unwrap(); // queue locked
+                // q.pop_front()
+                // } // q is dropped here, releasing the lock
+                // and not holding it for unnesesearly time during dbg!
                 if let Some(item) = item {
                     dbg!(item);
                 } else {
